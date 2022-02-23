@@ -1,91 +1,56 @@
+/* Colocation - template, script and style are included in the same file */
+
 <template>
-  <div id="wrapper">
-    <form @submit.prevent="submit">
-      <my-input 
-        name="Username" 
-        :rules="{ required: true, min: 5 }"
-        :value="username.value"
-        type="text"
-        @update="update"
-      />
+  <my-input
+    name="Username"
+    :rules="{ required: true, min: 5 }"
+    :value="username.value"
+    :error="username.error"
+    @udpate="update"
+  />
 
-      <my-input 
-        name="Password" 
-        :rules="{ required: true, min: 10 }"
-        :value="password.value"
-        type="password"
-        @update="update"
-      />
+  <my-input
+    name="Password"
+    :rules="{ required: true, min: 10 }"
+    :value="password.value"
+    :error="password.error"
+    @udpate="update"
+  />
 
-      <my-button 
-        color="white"
-        background="darkslateblue"
-        :disabled="!valid"
-      />
-    </form>
-  </div>
+  <my-button background="darkslateblue" color="white" :disabled="!valid" />
 </template>
 
 <script>
-import MyButton from './MyButton.vue'
-import MyInput from './MyInput.vue'
-
+import MyButton from "./MyButton.vue";
+import MyInput from "./MyInput.vue";
 export default {
   components: {
     MyButton,
-    MyInput
+    MyInput,
   },
 
   data() {
     return {
+      valid: true,
       username: {
-        value: '',
-        valid: false
+        value: "user",
+        error: "",
       },
       password: {
-        value: '',
-        valid: false
-      }
-    }
-  },
-
-  computed: {
-    valid() {
-      return this.username.valid && this.password.valid
-    }
+        value: "pass",
+        error: "",
+      },
+    };
   },
 
   methods: {
-    submit() {
-      console.log('Submit')
+    update({ name, value, error }) {
+      /* Apply array destructuring. Emitted values should be the same as the local variable definitions */
+      this[name].value = value;
+      this[name].error = error;
     },
-
-    update(payload) {
-      this[payload.name] = {
-        value: payload.value,
-        valid: payload.valid
-      }
-    }
-  }
-}
+  },
+};
 </script>
 
-<style>
-#wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 200px;
-}
-
-body {
-  font-family: Arial;
-}
-
-form {
-  max-width: 400px;
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-</style>
+<style scoped></style>

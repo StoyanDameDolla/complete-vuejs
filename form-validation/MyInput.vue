@@ -1,96 +1,81 @@
 <template>
-  <div class="input">
-    <div class="label">
-      <label :for="name">{{ name }}</label>
-      <div class="error">{{ error }}</div>
-    </div>
-    <input 
-      :id="name" 
-      :type="type" 
-      :value="value" 
-      @input="input"
-    />
+  <div class="label">
+    <label :for="name">{{ name }}</label>
+    <div class="error">{{ error }}</div>
   </div>
+  <input :id="name" :value="value" @input="input" />
 </template>
 
 <script>
 export default {
   props: {
-    type: {
+    name: {
       type: String,
-      default: 'text'
+      required: true,
     },
     value: {
       type: String,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true
+      required: true,
     },
     rules: {
-      // required: boolean
-      // min: number
       type: Object,
-      default: {}
-    }
+      default: {},
+    },
+    error: {
+      type: String,
+    },
   },
 
-  computed: {
-    error() {
-      return this.validate(this.value)
-    }
+  created() {
+    /* Lifecycle hook - performs error validation. No event is passed here! */
+    this.$emit("update", {
+      name: this.name.toLowerCase(),
+      value: this.value,
+      error: this.validate(this.value),
+    });
   },
 
   methods: {
+    input($event) {
+      this.$emit("update", {
+        name: this.name.toLowerCase(),
+        value: $event.target.value,
+        error: this.validate($event.target.value),
+      });
+    },
+
     validate(value) {
       if (this.rules.required && value.length === 0) {
-        return 'This value is required.'
+        return "Value is required!";
       }
 
       if (this.rules.min && value.length < this.rules.min) {
-        return `The minimum length ${this.rules.min}.`
+        return `The minimum length is ${this.rules.min}`;
       }
     },
-
-    input($event) {
-      this.$emit('update', {
-        name: this.name.toLowerCase(),
-        value: $event.target.value,
-        valid: !this.validate($event.target.value)
-      })
-    }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
-.input {
+.input-wrapper {
   display: flex;
   flex-direction: column;
 }
-
+.error {
+  color: red;
+}
 .label {
   display: flex;
   justify-content: space-between;
 }
-
-.error {
-  color: red;
-}
-
-.input {
-  width: 100%;
-}
-
 input {
-  box-sizing: border-box;
-  padding: 10px;
-  border-radius: 8px;
+  background: none;
+  color: black;
   border: 1px solid silver;
-  margin: 2px;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px 0;
   font-size: 16px;
-  width: 100%;
-  cursor: pointer;
 }
 </style>
